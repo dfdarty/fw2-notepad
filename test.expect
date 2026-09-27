@@ -1,2 +1,6 @@
 @sd notes/notes.txt ^hi9l U$
+@sd notes/notes.txt ^\[voice 1 0:02\]$
+@sd notes/voice/001.wav ^RIFF
 !notepad: save failed
+!notepad: saving .* failed
+@sd notes/notes.txt ^\[voice 2 0:02\]$

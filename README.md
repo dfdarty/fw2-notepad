@@ -1,8 +1,9 @@
 # notepad
 
-A text editor for the [FREE-WILi 2](https://freewili.com): type with an
-on-screen keyboard or the colour buttons, and your note is saved to the SD
-card. Built on WiliBSP, and tested on every push in the
+A text editor for the [FREE-WILi 2](https://freewili.com), made for field
+notes: type with an on-screen keyboard or the colour buttons, or record
+voice memos and turn them into text afterwards. Everything is saved to the
+SD card. Built on WiliBSP, and tested on every push in the
 [FREE-WILi 2 emulator](https://dfdarty.github.io/freewili2-emu/).
 
 ![notepad in the emulator](docs/notepad.png)
@@ -17,12 +18,60 @@ card. Built on WiliBSP, and tested on every push in the
 | new line | **enter**, or the centre of the D-pad |
 | delete | **<del**, or **CANCEL** (both repeat when held) |
 | save | **OK**. It also saves by itself two seconds after you stop typing |
+| record a voice memo | tap **mic**, talk, tap **stop**. Or hold the D-pad's **CENTER** and talk; let go to stop (a quick tap on CENTER is a new line) |
 | leave | hold **HOME** for 5 s. Hold **PAGE** for 5 s for the About screen |
 
 The top bar shows how many characters the note has and whether it is
 **saved** or **edited**. The note is `/notes/notes.txt` on the SD card in
-the MAIN processor's slot (up to 8 KB). If there is no card it says **no SD
-card** and you can still type, but nothing is kept.
+the MAIN processor's slot (up to 32 KB; a bigger file opens read-only so it
+is never cut short). If there is no card it says **no SD card** and you can
+still type, but nothing is kept. Saves are crash-safe: a new copy is written
+first and only then replaces the old one, so pulling the battery mid-save
+can't lose the note.
+
+## Voice memos
+
+![recording a voice memo](docs/recording.png)
+
+While you talk, the top bar shows **REC** with the time and a level meter.
+The four microphones are mixed into one track, which averages out some of
+the wind and handling noise. Each memo is up to 60 seconds and is saved as
+`/notes/voice/001.wav`, `002.wav`, … (16 kHz mono, about 32 KB a second),
+and a marker goes into the note on its own line:
+
+```text
+Launch 3, F32 motor, wind 5 mph from the west
+[voice 7 0:18]
+```
+
+The FW2 can't turn speech into text itself (that needs far more memory and
+processing than its chip has), so **`tools/transcribe.py`** does it on a
+computer afterwards, with [Whisper](https://github.com/SYSTRAN/faster-whisper),
+offline. Put the SD card in your PC (or copy its `notes` folder) and run:
+
+```sh
+pip install faster-whisper
+python tools/transcribe.py E:\                # the SD card's drive or folder
+```
+
+Each marker becomes the words spoken, with the memo number kept so you can
+find the recording:
+
+```text
+Launch 3, F32 motor, wind 5 mph from the west
+[voice 7] Apogee eight hundred forty feet, drogue at apogee, landed east of the pad.
+```
+
+- The first run downloads the speech model (`base.en`, about 150 MB); after
+  that it works without internet. `--model small.en` is slower and more
+  accurate; `--dry-run` shows the text without changing anything.
+- It knows model-rocketry words (motor, apogee, drogue, recovery, …); give
+  your own with `--prompt "..."`.
+- `notes.txt` is backed up to `notes.txt.bak` first, each memo's text is
+  also saved as `voice/NNN.txt`, and the recordings are kept. Memos that
+  were already transcribed are skipped, so running it again is safe.
+- Start the notepad again after putting the card back, so it loads the
+  transcribed note.
 
 ## Run it on your PC
 
@@ -51,11 +100,17 @@ for the D-pad; H O C P for HOME, OK, CANCEL, PAGE; 1–5 for the colour buttons.
   OneWili link. Saves are written in 512-byte pieces, because the OneWili
   client WiliBSP ships can overrun the MAIN processor's receive buffer with
   one long write.
+- Voice memos are kept in PSRAM while you talk and written to the card
+  afterwards, because the microphones' capture buffer holds only 64 ms and
+  a card write can take longer than that.
 - `test.txt` types with touches, the symbol page and a chord, edits in the
-  middle, deletes, and saves both ways; `test.expect` checks the file that
-  ended up on the SD card.
+  middle, deletes, saves both ways, and records two memos (a test tone
+  stands in for a voice): one with the mic key, one with push-to-talk.
+  `test.expect` checks the files that ended up on the SD card.
+- To try voice memos in the emulator with real speech, give it a recording
+  for the microphones to hear: `fw2emu run . --mic-wav speech.wav`.
 
-On the real chip (`fw2emu hwcheck`): 46 KB image, 114 KB of SRAM, 600 KB of
-PSRAM, 1.2 KB of stack.
+On the real chip (`fw2emu hwcheck`): 102 KB image, 266 KB of SRAM, 2.5 MB of
+PSRAM, 2.6 KB of stack.
 
 Unofficial; not affiliated with FREE-WILi LLC.

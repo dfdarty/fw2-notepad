@@ -1,5 +1,6 @@
 # notepad's test: type with the touch keyboard, the symbol keys and a chord,
-# edit in the middle, delete, save with OK and by autosave.
+# edit in the middle, delete, save with OK and by autosave, then record a
+# voice memo (a test tone stands in for a voice).
 # test.expect checks what ended up in the file on the SD card.
 wait 2500                  # board_init and the power zones
 expect "notepad: ready" 8000
@@ -21,5 +22,16 @@ expect "notepad: saved 7 bytes" 3000
 press CANCEL               # delete the "o" again
 wait 2600                  # autosave, 2 s after the last edit
 expect "notepad: saved 6 bytes" 1500
+press DOWN                 # cursor to the end of the note
+set tone 440 6000           # something for the microphones to hear
+touch 96 298               # mic: start recording
+wait 2000
+touch 96 298               # stop
+expect "notepad: saved voice 001 \(0:02" 15000
+expect "notepad: saved 22 bytes" 3000    # "hi9l U", and the marker on its own line
+press CENTER 2700           # push-to-talk: hold CENTER (recording starts after 0.6 s)
+expect "notepad: saved voice 002 \(0:02" 15000
+expect "notepad: saved 37 bytes" 3000    # and the second marker
+set tone 0
 screenshot out/notepad.png device
 quit
