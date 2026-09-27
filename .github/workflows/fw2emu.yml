@@ -1,0 +1,15 @@
+# On every push: build the app for the FREE-WILi 2 emulator, run test.txt
+# headless, check it fits the real chip, and keep the log and screenshots
+# (the run's Artifacts). https://dfdarty.github.io/freewili2-emu/ci/
+name: FREE-WILi 2 emulator
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dfdarty/freewili2-emu@v1
+        with:
+          app: .
+          hwcheck: true

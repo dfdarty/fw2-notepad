@@ -1,0 +1,25 @@
+# notepad's test: type with the touch keyboard, the symbol keys and a chord,
+# edit in the middle, delete, save with OK and by autosave.
+# test.expect checks what ended up in the file on the SD card.
+wait 2500                  # board_init and the power zones
+expect "notepad: ready" 8000
+touch 288 210              # h   (keyboard rows start at y 144, 44 px each)
+touch 360 166              # i
+touch 36 298               # 123: numbers and symbols
+touch 408 166              # 9
+touch 36 298               # abc
+press GREEN                # chord: the k l m n o group ...
+press YELLOW               # ... second press: l
+touch 228 298              # space
+touch 30 254               # shift
+touch 312 166              # U
+press LEFT                 # cursor back over "U" and " "
+press LEFT
+touch 408 166              # o   -> "hi9lo U"
+press OK                   # save now
+expect "notepad: saved 7 bytes" 3000
+press CANCEL               # delete the "o" again
+wait 2600                  # autosave, 2 s after the last edit
+expect "notepad: saved 6 bytes" 1500
+screenshot out/notepad.png device
+quit
