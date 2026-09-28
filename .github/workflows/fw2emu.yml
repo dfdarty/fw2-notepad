@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
-      - uses: dfdarty/freewili2-emu@v1
+      - uses: dfdarty/freewili2-emu@v2
         with:
           app: .
           hwcheck: true
