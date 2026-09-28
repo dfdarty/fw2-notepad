@@ -236,9 +236,11 @@ static void sd_connect(void) {
     bool is_dir = false;
     uint32_t size = 0;
     const char *path = NOTE_PATH;
+    bool recovered = false;
     ow_status st = ow_sd_stat(&s_dev, path, &is_dir, &size);
     if (st == OW_ERR_FAILED && ow_sd_stat(&s_dev, NOTE_NEW, &is_dir, &size) == OW_OK) {
-        path = NOTE_NEW;                           /* power went between a save's two steps */
+        path = NOTE_NEW;
+        recovered = true;                           /* power went between a save's two steps */
         st = OW_OK;
         DIAG("notepad: recovering the note from %s\n", NOTE_NEW);
     }
@@ -264,7 +266,7 @@ static void sd_connect(void) {
     s_cur = s_len;
     s_status = s_read_only ? ST_TOO_BIG : ST_SAVED;
     DIAG("notepad: loaded %d bytes from %s\n", s_len, path);
-    if (path == (const char *)NOTE_NEW) edited();  /* write it back under its proper name */
+    if (recovered) edited();  /* write it back under its proper name */
 }
 
 /* Crash-safe: the note is written to notes.new, and only when that is
