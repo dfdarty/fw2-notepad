@@ -1,6 +1,7 @@
 # notepad's test: type with the touch keyboard, the symbol keys and a chord,
-# edit in the middle, delete, save with OK and by autosave, then record a
-# voice memo (a test tone stands in for a voice).
+# edit in the middle, delete, save with OK and by autosave, then record two
+# voice memos, one with the mic key and one push-to-talk (a test tone stands
+# in for a voice).
 # test.expect checks what ended up in the file on the SD card.
 wait 2500                  # board_init and the power zones
 expect "notepad: ready" 8000

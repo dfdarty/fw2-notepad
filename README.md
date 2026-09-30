@@ -13,7 +13,7 @@ SD card. Built on WiliBSP, and tested on every push in the
 | To | Do |
 |---|---|
 | type | tap the keys; **shift** is for one capital, **123** / **abc** switch to numbers and symbols |
-| type without touching the screen | the five colour buttons: WiliBSP's two-press chord keyboard. The strip at the top right shows what each button types next; **PAGE** switches between letter, capital, number and symbol pages |
+| type without touching the screen | the five colour buttons: WiliBSP's two-press chord keyboard. The strip at the top right shows what each button types next; **PAGE** steps through the chord pages: lower-case letters, numbers (with + - * / = and brackets), capitals |
 | move the cursor | tap in the text, or use the D-pad (held keys repeat) |
 | new line | **enter**, or the centre of the D-pad |
 | delete | **<del**, or **CANCEL** (both repeat when held) |
@@ -110,7 +110,7 @@ for the D-pad; H O C P for HOME, OK, CANCEL, PAGE; 1–5 for the colour buttons.
 - To try voice memos in the emulator with real speech, give it a recording
   for the microphones to hear: `fw2emu run . --mic-wav speech.wav`.
 
-On the real chip (`fw2emu hwcheck`): 102 KB image, 266 KB of SRAM, 2.5 MB of
-PSRAM, 2.6 KB of stack.
+On the real chip (`fw2emu hwcheck`): 104 KB image, 339 KB of SRAM, 2.4 MB of
+PSRAM, 2.5 KB of stack.
 
 Unofficial; not affiliated with FREE-WILi LLC.
